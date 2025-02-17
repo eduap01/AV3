@@ -5,24 +5,25 @@ const Study = require('../models/study')
 router.get('/studies', isAuthenticated, async(req, res) =>{
     const study = new Study();
     const studies = await study.findAll(req.user._id);
-    res.render('studies', {studies : studies
+    res.render('studies', {
+    studies
     });
 });
 
 router.post('/studies/add', isAuthenticated, async (req, res, next) =>{
     const study = new Study(req.body);
-    task.usuario=req.user._id;
+    study.subject=req.subject._id;
     await study.insert();
     res.redirect('/studies');
 });
 
-router.get('/studies/turn/:id', isAuthenticated, async (req, res, next) => {
+/*router.get('/studies/turn/:id', isAuthenticated, async (req, res, next) => {
     let {id} = req.params;
     const study = await Study.findById(id);
     study.status=!study.status;
     await study.insert();
     res.redirect('/studies');
-})
+})*/
 
 router.get('/studies/edit/:id', isAuthenticated, async (req, res, next) => {
     let study = new Study();
