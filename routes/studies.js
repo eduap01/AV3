@@ -19,7 +19,7 @@ router.post('/studies/add', isAuthenticated, async (req, res) => {
 // Editar estudio
 router.get('studies/edit/:id', isAuthenticated, async (req, res) => {
   const study = await Study.findById(req.params.id);
-  res.render('edit_studies', { study });
+  res.render('edit', { study });
 });
 
 router.post('/studies/edit/:id', isAuthenticated, async (req, res) => {
