@@ -1,6 +1,6 @@
 const express=require('express');
 const router=express.Router();
-const Software=require('../models/softwares');
+const Software=require('../models/software');
 
 
 //get
