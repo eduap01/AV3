@@ -2,70 +2,101 @@
 
 <div class="container">
   <div class="row">
-    <!--FORM-->
+    <!-- FORMULARIO (Izquierda) -->
     <div class="col-md-5">
       <div class="card">
         <div class="card-body">
+          <h3 class="text-center">Añadir Asignatura</h3>
           <form action="/subjects/add" method="post">
+            <!-- Nombre -->
             <div class="form-group">
-              <input class="form-control" type="text" name="title" placeholder="Title">
+              <label>Nombre:</label>
+              <input class="form-control" type="text" name="name" placeholder="Nombre de la asignatura" required>
             </div>
+
+            <!-- Curso -->
             <div class="form-group">
-              <textsoftware class="form-control" name="description" cols="80"
-                placeholder="Añade una descripción"
-                ></textsoftware>
+              <label>Curso:</label>
+              <input class="form-control" type="text" name="grade" placeholder="Ejemplo: 10° Grado" required>
             </div>
-        <div class="form-group">
-                      <textsoftware class="form-control" name="link" cols="80"
-                        placeholder="Añade el link"
-                        ></textsoftware>
-                    </div>
-            <button class="btn btn-primary" type="submit">
-              Add
-            </button>
+
+            <!-- Descripción -->
+            <div class="form-group">
+              <label>Descripción:</label>
+              <textarea class="form-control" name="description" placeholder="Añade una descripción" rows="3"></textarea>
+            </div>
+
+            <!-- Profesores -->
+            <div class="form-group">
+              <label>Profesores:</label>
+              <% teachers.forEach(teacher => { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="teachers" value="<%= teacher._id %>">
+                  <label class="form-check-label"><%= teacher.name %></label>
+                </div>
+              <% }); %>
+            </div>
+
+            <!-- Alumnos -->
+            <div class="form-group">
+              <label>Alumnos:</label>
+              <% students.forEach(student => { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="students" value="<%= student._id %>">
+                  <label class="form-check-label"><%= student.name %></label>
+                </div>
+              <% }); %>
+            </div>
+
+            <!-- Botón de enviar -->
+            <button class="btn btn-primary btn-block mt-3" type="submit">Añadir Asignatura</button>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- LIST -->
+    <!-- LISTA DE ASIGNATURAS (Derecha) -->
     <div class="col-md-7">
+      <h3 class="text-center">Lista de Asignaturas</h3>
       <table class="table table-bordered table-hover">
         <thead>
           <tr>
-            <th>Id</th>
+            <th>N°</th>
             <th>Nombre</th>
+            <th>Descripción</th>
             <th>Curso</th>
-            <th>Alumnos</th>
             <th>Profesores</th>
-            <th>Estudio</th>
+            <th>Alumnos</th>
+            <th>Operaciones</th>
           </tr>
         </thead>
         <tbody>
-          <% for(var i=0; i < subjects.length; i++) { %>
+          <% subjects.forEach((subject, index) => { %>
             <tr>
-              <td><%= i + 1%></td>
-              <td><strong><%= subjects[i].name %></strong></td>
-              <td><%= subjects[i].grade %></td>
-              <td><%= subjects[i].study %></td>
+              <td><%= index + 1 %></td>
+              <td><strong><%= subject.name %></strong></td>
+              <td><%= subject.description %></td>
+              <td><%= subject.grade %></td>
               <td>
-
-                <a href="/subjects/delete/<%= subjects[i]._id %>"
-                  class="btn btn-danger">
-                  Delete
-                </a>
-                <a href="/subjects/edit/<%= subjects[i]._id %>" class="btn btn-info">
-                  Edit
-                </a>
+                <% subject.teachers.forEach(teacher => { %>
+                  <span class="badge badge-info"><%= teacher.name %></span>
+                <% }); %>
+              </td>
+              <td>
+                <% subject.students.forEach(student => { %>
+                  <span class="badge badge-success"><%= student.name %></span>
+                <% }); %>
+              </td>
+              <td>
+                <a href="/subjects/edit/<%= subject._id %>" class="btn btn-info btn-sm">Editar</a>
+                <a href="/subjects/delete/<%= subject._id %>" class="btn btn-danger btn-sm">Eliminar</a>
               </td>
             </tr>
-          <% } %>
+          <% }); %>
         </tbody>
       </table>
-
     </div>
   </div>
-
 </div>
 
 <% include partials/_footer %>
