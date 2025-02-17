@@ -30,7 +30,7 @@ passport.use('local-signup', new LocalStrategy({
   .catch(error => console.log(error));
     done(null, newUser);
   }
-}));
+})) ;
 
 passport.use('local-signin', new LocalStrategy({
   usernameField: 'email',
