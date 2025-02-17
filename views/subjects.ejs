@@ -1,0 +1,71 @@
+<% include partials/_header %>
+
+<div class="container">
+  <div class="row">
+    <!--FORM-->
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-body">
+          <form action="/subjects/add" method="post">
+            <div class="form-group">
+              <input class="form-control" type="text" name="title" placeholder="Title">
+            </div>
+            <div class="form-group">
+              <textsoftware class="form-control" name="description" cols="80"
+                placeholder="Añade una descripción"
+                ></textsoftware>
+            </div>
+        <div class="form-group">
+                      <textsoftware class="form-control" name="link" cols="80"
+                        placeholder="Añade el link"
+                        ></textsoftware>
+                    </div>
+            <button class="btn btn-primary" type="submit">
+              Add
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIST -->
+    <div class="col-md-7">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Curso</th>
+            <th>Alumnos</th>
+            <th>Profesores</th>
+            <th>Estudio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < subjects.length; i++) { %>
+            <tr>
+              <td><%= i + 1%></td>
+              <td><strong><%= subjects[i].name %></strong></td>
+              <td><%= subjects[i].grade %></td>
+              <td><%= subjects[i].study %></td>
+              <td>
+
+                <a href="/subjects/delete/<%= subjects[i]._id %>"
+                  class="btn btn-danger">
+                  Delete
+                </a>
+                <a href="/subjects/edit/<%= subjects[i]._id %>" class="btn btn-info">
+                  Edit
+                </a>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>
+
+<% include partials/_footer %>
