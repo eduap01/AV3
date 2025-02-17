@@ -23,7 +23,6 @@ router.post('/studies/add', isAuthenticated, async (req, res, next) =>{
     study.status=!study.status;
     await study.insert();
     res.redirect('/studies');
-    prueba
 })*/
 
 router.get('/studies/edit/:id', isAuthenticated, async (req, res, next) => {
