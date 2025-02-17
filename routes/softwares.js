@@ -30,7 +30,7 @@ router.get('/software/edit/:id', isAuthenticated, async (req, res, next)=>{
 router.post('/software/edit/:id', isAuthenticated, async (req, res, next)=>{
     const software=new Software();
     const{id}=req.params;
-    await task.update({_id:id}, req.body);
+    await software.update({_id:id}, req.body);
     res.redirect('/software');
 });
 
@@ -38,7 +38,7 @@ router.post('/software/edit/:id', isAuthenticated, async (req, res, next)=>{
 router.get('/software/delete/:id', isAuthenticated, async(req, res, next)=>{
     const software=new Software();
     let{id}=req.params;
-    await task.delete(id);
+    await software.delete(id);
     res.redirect('/software');
 });
 
