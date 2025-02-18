@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const passport = require('passport');
+const User = require('../models/user')
 
-router.get('/', (req, res, next) => {
+/*router.get('/', (req, res, next) => {
   res.render('index');
-});
+});*/
 
 router.get('/signin', (req, res, next) => {
   res.render('signin');
@@ -26,12 +27,19 @@ router.get('/logout', (req, res, next) => {
   });
 });
 
+//obtener todos los usuarios
+router.get('/users', isAuthenticated, async (req, res) =>{
+    const users = await User.find();
+    res.render('users', {users});
+
+})
+
 /*-------añadir,modificar,eliminar usuarios---------*/
 
 router.post('/users/add', isAuthenticated,async (req, res, next) => {
   const user = new User(req.body);
   user.usuario=req.user._id;
-  await user.insert();
+  await user.save();
   res.redirect('/users');
 });
 
@@ -46,7 +54,7 @@ router.post('/users/add', isAuthenticated,async (req, res, next) => {
 
 router.get('/users/edit/:id', isAuthenticated, async (req, res, next) => {
   var user = new User();
-  task = await user.findById(req.params.id);
+  user = await user.findById(req.params.id);
   res.render('edit', { user });
 });
 
