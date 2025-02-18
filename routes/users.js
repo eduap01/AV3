@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
+const User = require('../models/user')
 
 router.get('/', (req, res, next) => {
   res.render('index');
@@ -25,6 +26,13 @@ router.get('/logout', (req, res, next) => {
     res.redirect('/');
   });
 });
+
+//obtener todos los usuarios
+router.get('/users', isAuthenticated, async (req, res) =>{
+    const users = await User.find();
+    res.render('users', {users});
+
+})
 
 /*-------añadir,modificar,eliminar usuarios---------*/
 
