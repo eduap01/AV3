@@ -54,7 +54,7 @@ router.post('/users/add', isAuthenticated,async (req, res, next) => {
 
 router.get('/users/edit/:id', isAuthenticated, async (req, res, next) => {
   var user = new User();
-  task = await user.findById(req.params.id);
+  user = await user.findById(req.params.id);
   res.render('edit', { user });
 });
 
