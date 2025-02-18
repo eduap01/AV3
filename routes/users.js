@@ -39,7 +39,7 @@ router.get('/users', isAuthenticated, async (req, res) =>{
 router.post('/users/add', isAuthenticated,async (req, res, next) => {
   const user = new User(req.body);
   user.usuario=req.user._id;
-  await user.insert();
+  await user.save();
   res.redirect('/users');
 });
 
