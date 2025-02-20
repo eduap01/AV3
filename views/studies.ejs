@@ -36,10 +36,12 @@
               <td><%= i + 1 %></td>
               <td><strong><%= studies[i].name %></strong></td>
               <td><%= studies[i].type %></td>
+              <% if (user.rol === "admin") { %>
               <td>
                 <a href="/studies/delete/<%= studies[i]._id %>" class="btn btn-danger">Eliminar</a>
                 <a href="/studies/edit/<%= studies[i]._id %>" class="btn btn-info">Editar</a>
               </td>
+            <% } %>
             </tr>
           <% } %>
         </tbody>
