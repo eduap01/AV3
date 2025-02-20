@@ -52,18 +52,57 @@ router.post('/users/add', isAuthenticated,async (req, res, next) => {
 });*/
 
 
-router.get('/users/edit/:id', isAuthenticated, async (req, res, next) => {
-  var user = new User();
-  user = await user.findById(req.params.id);
-  res.render('edit', { user });
+router.get('/users/edit/:id', isAuthenticated, async (req, res) => {
+
+  const user = await user.findById(req.params.id);
+  res.render('edit_user', { user });
 });
 
-router.post('/users/edit/:id',isAuthenticated, async (req, res, next) => {
-  const user = new User();
-  const { id } = req.params;
-  await user.update({_id: id}, req.body);
-  res.redirect('/users');
-});
+
+
+
+  router.post('/users/edit/:id', isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      let { email, password, rol, name, surname, subjects } = req.body;
+
+      if (password) {
+        const user = await User.findById(id);
+        if (!user) {
+          return res.status(404).send('Usuario no encontrado');
+        }
+        password = user.encryptPassword(password); // Encripta la nueva contraseña
+      }
+
+
+      await User.findByIdAndUpdate(id, {
+        email,
+        password,
+        rol,
+        name,
+        surname,
+        subjects
+      }, { new: true });
+
+      res.redirect('/users');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error al actualizar el usuario');
+    }
+  });
+
+  module.exports = router;
+
+
+
+
+
+/*
+  router.post('/studies/edit/:id', isAuthenticated, async (req, res) => {
+    const { name, type } = req.body;
+    await Study.findByIdAndUpdate(req.params.id, { name, type });
+    res.redirect('/studies');
+  });*/
 
 router.get('/users/delete/:id', isAuthenticated,async (req, res, next) => {
   const user = new User();
