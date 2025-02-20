@@ -2,19 +2,19 @@ const express = require('express');
 const router = express.Router();
 const Subject = require('../models/subject');
 const User = require('../models/user'); // Ahora usamos el modelo User para manejar profesores y alumnos
-
+const Study = require('../models/study');
 // GET - Cargar la página de asignaturas con todos los profesores y estudiantes
 router.get('/subjects', isAuthenticated, async (req, res) => {
     try {
         // Obtener todas las asignaturas con los usuarios (profesores y alumnos)
-        const subjects = await Subject.find().populate('teachers students');
-
+        const subjects = await Subject.find();
         // Obtener todos los profesores y alumnos desde el modelo User
         const teachers = await User.find({ rol: 'profesor' });
         const students = await User.find({ rol: 'alumno' });
+        const studies = await Study.find();
 
         // Renderizar la vista y pasar los datos
-        res.render('subjects', { subjects, teachers, students });
+        res.render('subjects', { subjects, description, teachers, students, studies });
     } catch (error) {
         console.error("Error al obtener los datos:", error);
         res.status(500).send("Error interno del servidor");
@@ -25,13 +25,14 @@ router.get('/subjects', isAuthenticated, async (req, res) => {
 router.post('/subjects/add', isAuthenticated, async (req, res) => {
     try {
         // Extraer datos del formulario (profesores y alumnos seleccionados)
-        const { name, grade, description, teachers, students } = req.body;
+        const { name, grade, description, teachers, students, study } = req.body;
 
         // Crear una nueva asignatura con los datos del formulario
         const newSubject = new Subject({
             name,
             grade,
             description,
+            study,
             teachers: teachers || [],
             students: students || []
         });
@@ -76,7 +77,8 @@ router.post('/subjects/edit/:id', isAuthenticated, async (req, res) => {
             grade,
             description,
             teachers: teachers || [],
-            students: students || []
+            students: students || [],
+            study
         });
 
         // Redirigir a la página de asignaturas

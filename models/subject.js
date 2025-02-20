@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const SubjectSchema = new Schema({
     name: { type: String, required: true },
     grade: { type: String, required: true },
+    description: {type: String, required: true},
     students: [{ type: Schema.Types.ObjectId, ref: 'Student' }], // Relación con estudiantes
     teachers: [{ type: Schema.Types.ObjectId, ref: 'Teacher' }], // Relación con profesores
     study: { type: Schema.Types.ObjectId, ref: 'Study', required: true } // Relación con un área de estudio

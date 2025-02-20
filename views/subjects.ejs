@@ -15,10 +15,16 @@
             </div>
 
             <!-- Curso -->
-            <div class="form-group">
-              <label>Curso:</label>
-              <input class="form-control" type="text" name="grade" placeholder="Ejemplo: 10° Grado" required>
-            </div>
+
+       <select class="form-select" name="study" id="study" aria-label="Default select example">
+           <% for (var i=0; i < studies.length; i++){%>
+         <option value="<%=studies[i]._id%>"><%=studies[i].name%></option>
+    <%}%>
+       </select>
+        <div class="form-group">
+                      <label>Curso:</label>
+                      <input class="form-control" type="text" name="grade" placeholder="Ejemplo: 10° Grado" required>
+                    </div>
 
             <!-- Descripción -->
             <div class="form-group">
@@ -79,12 +85,20 @@
               <td><%= subject.grade %></td>
               <td>
                 <% subject.teachers.forEach(teacher => { %>
-                  <span class="badge badge-info"><%= teacher.name %></span>
+                    <%teachers.forEach(teacher1 => { %>
+                        <%if(teacher.toString()==teacher1._id.toString()){ %>
+                  <span><%= teacher1.name+" "+teacher1.surname %></span>
+                  <% } %>
+                <% }); %>
                 <% }); %>
               </td>
               <td>
                 <% subject.students.forEach(student => { %>
-                  <span class="badge badge-success"><%= student.name %></span>
+                  <% students.forEach(student1 => { %>
+                    <% if(student.toString()==student1._id.toString()){ %>
+                  <span ><%= student1.name+" "+student1.surname %></span>
+                                  <% } %>
+                    <% }); %>
                 <% }); %>
               </td>
               <td>
