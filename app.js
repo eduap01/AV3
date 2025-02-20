@@ -40,19 +40,6 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', indexRouter);
-app.use('/', usersRouter);
-app.use('/', subjectsRouter);
-app.use('/', studiesRouter);
-app.use('/', softwaresRouter);
-
-
-/*app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/subjects', subjectsRouter);
-app.use('/studies', studiesRouter);
-app.use('/softwares', softwaresRouter);*/
-
 
 app.use((req, res, next) => {
   app.locals.signinMessage = req.flash('signinMessage');
@@ -61,12 +48,20 @@ app.use((req, res, next) => {
 });
 
 
-//app.use('/', indexRouter);
-//app.use('/', usersRouter);
-//app.use('/', subjectsRouter);
-//app.use('/', studiesRouter);
-//app.use('/', softwaresRouter);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/subjects', subjectsRouter);
+app.use('/studies', studiesRouter);
+app.use('/softwares', softwaresRouter);
 
+
+
+
+app.use('/', indexRouter);
+app.use('/', usersRouter);
+app.use('/', subjectsRouter);
+app.use('/', studiesRouter);
+app.use('/', softwaresRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
