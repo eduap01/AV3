@@ -4,16 +4,16 @@ const Software=require('../models/software');
 
 
 //get
-router.get('/software', isAuthenticated, async(req, res) => {
+router.get('/softwares', isAuthenticated, async(req, res) => {
     const software=new Software();
     const softwares=await software.findAll(req.subject._id);
-    res.render('software', {
+    res.render('softwares', {
         softwares
     });
 });
 
 //post
-router.post('/software/add', isAuthenticated, async(req, res, next) =>{
+router.post('/softwares/add', isAuthenticated, async(req, res, next) =>{
     const software=new Software(req.body);
     software.subject=req.subject._id;
     await software.insert();
@@ -21,13 +21,13 @@ router.post('/software/add', isAuthenticated, async(req, res, next) =>{
 });
 
 //editar
-router.get('/software/edit/:id', isAuthenticated, async (req, res, next)=>{
+router.get('/softwares/edit/:id', isAuthenticated, async (req, res, next)=>{
     var software=new Software();
     software=await software.findById(req.params.id);
     res.render('edit', {software});
 });
 
-router.post('/software/edit/:id', isAuthenticated, async (req, res, next)=>{
+router.post('/softwares/edit/:id', isAuthenticated, async (req, res, next)=>{
     const software=new Software();
     const{id}=req.params;
     await software.update({_id:id}, req.body);
@@ -35,7 +35,7 @@ router.post('/software/edit/:id', isAuthenticated, async (req, res, next)=>{
 });
 
 //borrar
-router.get('/software/delete/:id', isAuthenticated, async(req, res, next)=>{
+router.get('/softwares/delete/:id', isAuthenticated, async(req, res, next)=>{
     const software=new Software();
     let{id}=req.params;
     await software.delete(id);
@@ -43,7 +43,7 @@ router.get('/software/delete/:id', isAuthenticated, async(req, res, next)=>{
 });
 
 //buscar
-router.get('software/search', isAuthenticated, async(req, res, next)=>{
+router.get('softwares/search', isAuthenticated, async(req, res, next)=>{
     const software=new Software();
     let search=req.query.search;
     const softwares=await software.findSearch(search, req.subject._id);

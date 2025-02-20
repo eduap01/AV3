@@ -40,17 +40,22 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/subjects', subjectsRouter);
-app.use('/studies', studiesRouter);
-app.use('/softwares', softwaresRouter);
 
 app.use((req, res, next) => {
   app.locals.signinMessage = req.flash('signinMessage');
   app.locals.user = req.user;
   next();
 });
+
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/subjects', subjectsRouter);
+app.use('/studies', studiesRouter);
+app.use('/softwares', softwaresRouter);
+
+
+
 
 app.use('/', indexRouter);
 app.use('/', usersRouter);
