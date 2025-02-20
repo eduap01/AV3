@@ -69,7 +69,7 @@
           <tr>
             <th>N°</th>
             <th>Nombre</th>
-            <th>Descripción</th>
+            <th>Estudio</th>
             <th>Curso</th>
             <th>Profesores</th>
             <th>Alumnos</th>
@@ -81,7 +81,7 @@
             <tr>
               <td><%= index + 1 %></td>
               <td><strong><%= subject.name %></strong></td>
-              <td><%= subject.description %></td>
+              <td><%= subject.study %></td>
               <td><%= subject.grade %></td>
               <td>
                 <% subject.teachers.forEach(teacher => { %>
