@@ -114,7 +114,7 @@ router.post('/subjects/edit/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-
+//
 
 
 // GET - Eliminar una asignatura
