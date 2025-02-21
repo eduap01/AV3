@@ -13,7 +13,7 @@ const SoftwareSchema=Schema({
     },
 
     subject:[
-        {type:mongoose.Schema.Types.ObjectId, ref:'subject'}
+        {type:mongoose.Schema.Types.ObjectId, ref:'Subject'}
     ]
 });
 
