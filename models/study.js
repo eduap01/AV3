@@ -13,7 +13,7 @@ const StudySchema = Schema({
 });
 
 StudySchema.methods.findAll = async function (){
-    const Study = mongoose.model("studies", StudySchema);
+    const Study = mongoose.model("Study", StudySchema);
     return await Study.find({})
     .then(result => {return result})
     .catch(error => console.log(error));
@@ -26,24 +26,24 @@ StudySchema.methods.insert= async function (){
 };
 
 StudySchema.methods.update= async (id, study) => {
-	const Study = mongoose.model("studies", StudySchema);
+	const Study = mongoose.model("Study", StudySchema);
 	await Study.updateOne({_id: id}, study)
 	.then (result => console.log(result))
 	.catch (error => console.log(error))
 };
 
 StudySchema.methods.delete= async function (id) {
-	const Study = mongoose.model("studies", StudySchema);
+	const Study = mongoose.model("Study", StudySchema);
 	await Study.deleteOne({_id: id})
 	.then (result => console.log(result))
 	.catch (error => console.log(error))
 };
 
 StudySchema.methods.findById= async function (id) {
-	const Study = mongoose.model("studies", StudySchema);
+	const Study = mongoose.model("Study", StudySchema);
 	return await Study.findById(id)
 	.then (result => {return result})
 	.catch (error => console.log(error));
 }
 
-module.exports = mongoose.model('studies', StudySchema);
+module.exports = mongoose.model('Study', StudySchema);
