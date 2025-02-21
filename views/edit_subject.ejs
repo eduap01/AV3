@@ -33,31 +33,33 @@
               <textarea class="form-control" name="description" placeholder="Añade una descripción" rows="3"><%= subject.description %></textarea>
             </div>
 
-            <!-- Profesores -->
-            <select class="form-control" name="teachers" multiple required>
-                <% teachers.forEach(teacher => { %>
-                    <option value="<%= teacher._id %>"
-                        <% if(subject.teachers && subject.teachers.some(t => t._id.toString() === teacher._id.toString())) { %>
-                            selected
-                        <% } %>
-                    >
-                        <%= teacher.name %> <%= teacher.surname %>
-                    </option>
-                <% }); %>
-            </select>
+           <!-- Profesores -->
+           <label>Profesores:</label>
+           <select class="form-select" name="teachers" multiple required>
+             <% for (var i = 0; i < teachers.length; i++) { %>
+               <option value="<%= teachers[i]._id %>"
+                 <% if (subject.teachers.some(t => t._id.toString() === teachers[i]._id.toString())) { %>
+                   selected
+                 <% } %>
+               >
+                 <%= teachers[i].name %> <%= teachers[i].surname %>
+               </option>
+             <% } %>
+           </select>
 
-            <!-- Alumnos -->
-            <select class="form-control" name="students" multiple required>
-                <% students.forEach(student => { %>
-                    <option value="<%= student._id %>"
-                        <% if(subject.students && subject.students.some(s => s._id.toString() === student._id.toString())) { %>
-                            selected
-                        <% } %>
-                    >
-                        <%= student.name %> <%= student.surname %>
-                    </option>
-                <% }); %>
-            </select>
+           <!-- Alumnos -->
+           <label>Alumnos:</label>
+           <select class="form-select" name="students" multiple required>
+             <% for (var i = 0; i < students.length; i++) { %>
+               <option value="<%= students[i]._id %>"
+                 <% if (subject.students.some(s => s._id.toString() === students[i]._id.toString())) { %>
+                   selected
+                 <% } %>
+               >
+                 <%= students[i].name %> <%= students[i].surname %>
+               </option>
+             <% } %>
+           </select>
 
 
             <!-- Botón de enviar -->

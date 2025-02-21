@@ -3,6 +3,7 @@ const router = express.Router();
 const Subject = require('../models/subject');
 const User = require('../models/user'); // Ahora usamos el modelo User para manejar profesores y alumnos
 const Study = require('../models/study');
+const mongoose = require('mongoose');
 
 // GET - Cargar la página de asignaturas con todos los profesores y estudiantes
 router.get('/subjects', isAuthenticated, async (req, res) => {
@@ -54,27 +55,26 @@ router.get('/subjects/edit/:id', isAuthenticated, async (req, res) => {
     try {
         const subjectId = req.params.id;
 
-        // Buscar la asignatura y poblar los usuarios con rol "profesor" y "alumno"
+        // Buscar la asignatura y poblar relaciones
         const subject = await Subject.findById(subjectId)
-            .populate({
-                path: 'students', // Poblar alumnos
-            })
-            .populate({
-                path: 'teachers', // Poblar profesores
-            })
-            .populate('study'); // Poblar estudio
+            .populate('students')
+            .populate('teachers')
+            .populate('study');
 
-        // Si no se encuentra la asignatura, mostrar la vista con datos vacíos
         if (!subject) {
             return res.render('edit_subject', { subject: {}, teachers: [], students: [], studies: [] });
         }
 
-        // Obtener todos los usuarios con rol de profesor y alumno para los selects
-        const teachers = await User.find({ rol: 'Teacher' });
-        const students = await User.find({ rol: 'Student' });
+        // Obtener todos los usuarios con rol de profesor y alumno usando los valores reales
+        const teachers = await User.find({ rol: 'profesor' });
+        const students = await User.find({ rol: 'alumno' });
         const studies = await Study.find();
 
-        // Renderizar la vista de edición con los datos de la asignatura
+        console.log("Subject:", subject);
+                console.log("Teachers:", teachers);
+                console.log("Students:", students);
+                console.log("Studies:", studies);
+
         res.render('edit_subject', { subject, teachers, students, studies });
     } catch (error) {
         console.error("Error al cargar la asignatura para editar:", error);
@@ -93,21 +93,20 @@ router.post('/subjects/edit/:id', isAuthenticated, async (req, res) => {
         const teacherIds = Array.isArray(teachers) ? teachers : teachers ? [teachers] : [];
         const studentIds = Array.isArray(students) ? students : students ? [students] : [];
 
-        // Convertir los valores de teachers y students a ObjectId
-        const teacherObjectIds = teacherIds.map(teacherId => mongoose.Types.ObjectId(teacherId));
-        const studentObjectIds = studentIds.map(studentId => mongoose.Types.ObjectId(studentId));
+        // Convertir los valores de teachers y students a ObjectId usando new
+        const teacherObjectIds = teacherIds.map(teacherId => new mongoose.Types.ObjectId(teacherId)); // <-- Agrega new
+        const studentObjectIds = studentIds.map(studentId => new mongoose.Types.ObjectId(studentId)); // <-- Agrega new
 
         // Actualizar los datos de la asignatura
         await Subject.findByIdAndUpdate(id, {
             name,
             grade,
             description,
-            teachers: teacherObjectIds,  // Actualiza los profesores como ObjectIds
-            students: studentObjectIds,  // Actualiza los alumnos como ObjectIds
-            study  // Actualiza el estudio
+            teachers: teacherObjectIds,
+            students: studentObjectIds,
+            study
         }, { new: true });
 
-        // Redirigir a la página de asignaturas después de la actualización
         res.redirect('/subjects');
     } catch (error) {
         console.error("Error al actualizar la asignatura:", error);
