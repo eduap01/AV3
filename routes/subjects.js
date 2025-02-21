@@ -7,7 +7,7 @@ const Study = require('../models/study');
 router.get('/subjects', isAuthenticated, async (req, res) => {
     try {
         // Obtener todas las asignaturas con los usuarios (profesores y alumnos)
-        const subjects = await Subject.find(). populate('studies');
+        const subjects = await Subject.find(). populate('study');
         // Obtener todos los profesores y alumnos desde el modelo User
         const teachers = await User.find({ rol: 'profesor' });
         const students = await User.find({ rol: 'alumno' });
