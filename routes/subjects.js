@@ -7,14 +7,14 @@ const Study = require('../models/study');
 router.get('/subjects', isAuthenticated, async (req, res) => {
     try {
         // Obtener todas las asignaturas con los usuarios (profesores y alumnos)
-        const subjects = await Subject.find();
+        const subjects = await Subject.find(). populate('studies');
         // Obtener todos los profesores y alumnos desde el modelo User
         const teachers = await User.find({ rol: 'profesor' });
         const students = await User.find({ rol: 'alumno' });
         const studies = await Study.find();
 
         // Renderizar la vista y pasar los datos
-        res.render('subjects', { subjects, description, teachers, students, studies });
+        res.render('subjects', { subjects, teachers, students, studies });
     } catch (error) {
         console.error("Error al obtener los datos:", error);
         res.status(500).send("Error interno del servidor");
