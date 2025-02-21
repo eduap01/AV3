@@ -1,0 +1,72 @@
+<% include partials/_header %>
+
+<div class="container">
+  <div class="row">
+    <!-- FORMULARIO (Izquierda) -->
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="text-center">Editar Asignatura: <%= subject.name %></h3>
+          <form action="/subjects/edit/<%= subject._id %>" method="post">
+            <!-- Nombre -->
+            <div class="form-group">
+              <label>Nombre:</label>
+              <input class="form-control" type="text" name="name" value="<%= subject.name %>" placeholder="Nombre de la asignatura" required>
+            </div>
+
+            <label>Estudio:</label>
+            <select class="form-select" name="study" id="study" aria-label="Default select example">
+                       <% for (var i=0; i < studies.length; i++){%>
+                     <option value="<%=studies[i]._id%>"><%=studies[i].name%></option>
+                <%}%>
+                   </select>
+
+            <!-- Grado -->
+            <div class="form-group">
+              <label>Grado:</label>
+              <input class="form-control" type="text" name="grade" value="<%= subject.grade %>" placeholder="Ejemplo: 10° Grado" required>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+              <label>Descripción:</label>
+              <textarea class="form-control" name="description" placeholder="Añade una descripción" rows="3"><%= subject.description %></textarea>
+            </div>
+
+            <!-- Profesores -->
+            <select class="form-control" name="teachers" multiple required>
+                <% teachers.forEach(teacher => { %>
+                    <option value="<%= teacher._id %>"
+                        <% if(subject.teachers && subject.teachers.some(t => t._id.toString() === teacher._id.toString())) { %>
+                            selected
+                        <% } %>
+                    >
+                        <%= teacher.name %> <%= teacher.surname %>
+                    </option>
+                <% }); %>
+            </select>
+
+            <!-- Alumnos -->
+            <select class="form-control" name="students" multiple required>
+                <% students.forEach(student => { %>
+                    <option value="<%= student._id %>"
+                        <% if(subject.students && subject.students.some(s => s._id.toString() === student._id.toString())) { %>
+                            selected
+                        <% } %>
+                    >
+                        <%= student.name %> <%= student.surname %>
+                    </option>
+                <% }); %>
+            </select>
+
+
+            <!-- Botón de enviar -->
+            <button class="btn btn-primary btn-block mt-3" type="submit">Actualizar Asignatura</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% include partials/_footer %>

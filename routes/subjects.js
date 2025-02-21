@@ -3,6 +3,7 @@ const router = express.Router();
 const Subject = require('../models/subject');
 const User = require('../models/user'); // Ahora usamos el modelo User para manejar profesores y alumnos
 const Study = require('../models/study');
+
 // GET - Cargar la página de asignaturas con todos los profesores y estudiantes
 router.get('/subjects', isAuthenticated, async (req, res) => {
     try {
@@ -51,43 +52,71 @@ router.post('/subjects/add', isAuthenticated, async (req, res) => {
 // GET - Cargar la página para editar una asignatura
 router.get('/subjects/edit/:id', isAuthenticated, async (req, res) => {
     try {
-        // Obtener la asignatura que se va a editar
-        const subject = await Subject.findById(req.params.id).populate('teachers students');
+        const subjectId = req.params.id;
 
-        // Obtener todos los profesores y alumnos
-        const teachers = await User.find({ rol: 'profesor' });
-        const students = await User.find({ rol: 'alumno' });
+        // Buscar la asignatura y poblar los usuarios con rol "profesor" y "alumno"
+        const subject = await Subject.findById(subjectId)
+            .populate({
+                path: 'students', // Poblar alumnos
+            })
+            .populate({
+                path: 'teachers', // Poblar profesores
+            })
+            .populate('study'); // Poblar estudio
 
-        // Renderizar la vista de edición y pasar los datos
-        res.render('edit', { subject, teachers, students });
+        // Si no se encuentra la asignatura, mostrar la vista con datos vacíos
+        if (!subject) {
+            return res.render('edit_subject', { subject: {}, teachers: [], students: [], studies: [] });
+        }
+
+        // Obtener todos los usuarios con rol de profesor y alumno para los selects
+        const teachers = await User.find({ rol: 'Teacher' });
+        const students = await User.find({ rol: 'Student' });
+        const studies = await Study.find();
+
+        // Renderizar la vista de edición con los datos de la asignatura
+        res.render('edit_subject', { subject, teachers, students, studies });
     } catch (error) {
         console.error("Error al cargar la asignatura para editar:", error);
-        res.status(500).send("Error al cargar la asignatura para editar");
+        res.render('edit_subject', { subject: {}, teachers: [], students: [], studies: [] });
     }
 });
+
 
 // POST - Actualizar la asignatura editada
 router.post('/subjects/edit/:id', isAuthenticated, async (req, res) => {
     try {
-        const { name, grade, description, teachers, students } = req.body;
+        const { id } = req.params;
+        let { name, grade, description, teachers, students, study } = req.body;
+
+        // Asegurarse de que teachers y students sean arrays válidos
+        const teacherIds = Array.isArray(teachers) ? teachers : teachers ? [teachers] : [];
+        const studentIds = Array.isArray(students) ? students : students ? [students] : [];
+
+        // Convertir los valores de teachers y students a ObjectId
+        const teacherObjectIds = teacherIds.map(teacherId => mongoose.Types.ObjectId(teacherId));
+        const studentObjectIds = studentIds.map(studentId => mongoose.Types.ObjectId(studentId));
 
         // Actualizar los datos de la asignatura
-        await Subject.findByIdAndUpdate(req.params.id, {
+        await Subject.findByIdAndUpdate(id, {
             name,
             grade,
             description,
-            teachers: teachers || [],
-            students: students || [],
-            study
-        });
+            teachers: teacherObjectIds,  // Actualiza los profesores como ObjectIds
+            students: studentObjectIds,  // Actualiza los alumnos como ObjectIds
+            study  // Actualiza el estudio
+        }, { new: true });
 
-        // Redirigir a la página de asignaturas
+        // Redirigir a la página de asignaturas después de la actualización
         res.redirect('/subjects');
     } catch (error) {
         console.error("Error al actualizar la asignatura:", error);
         res.status(500).send("Error al actualizar la asignatura");
     }
 });
+
+
+
 
 // GET - Eliminar una asignatura
 router.get('/subjects/delete/:id', isAuthenticated, async (req, res) => {
