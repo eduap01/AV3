@@ -61,12 +61,17 @@ userSchema.statics.updateEmailById = async function (id, body/*porque cojo todo 
 };
 
 //finbyID
-userSchema.methods.findById= async function (id) {
-  const User = mongoose.model("users", userSchema);
-  return await User.findById(id)
-   .then(result => console.log(result))
-   .catch(error => console.log(error));
+userSchema.statics.findById = async function (id) {
+  try {
+    const result = await this.findById(id)
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
+
 
 //findbyAsignaturasporUsuario
 userSchema.statics.findBySubjectName = async function (subjectName) {
