@@ -1,36 +1,50 @@
 <% include partials/_header %>
+
 <div class="container">
   <div class="row">
     <!-- FORM -->
-    <div class="col-md-5 offset-md-3">
-      <div class="card">
+    <div class="col-md-6 offset-md-3">
+      <div class="card mt-5">
+        <div class="card-header bg-primary text-white">
+          <h4 class="card-title text-center">Editar Software</h4>
+        </div>
         <div class="card-body">
           <form action="/softwares/edit/<%= software._id %>" method="post">
+            <!-- Campo: Descripción -->
             <div class="form-group">
+              <label for="description" class="font-weight-bold">Descripción:</label>
               <input
                 class="form-control"
                 type="text"
+                id="description"
                 name="description"
-                placeholder="Descripcion"
                 value="<%= software.description %>"
                 required>
             </div>
+
+            <!-- Campo: Link -->
             <div class="form-group">
+              <label for="link" class="font-weight-bold">Enlace:</label>
               <input
                 class="form-control"
                 type="text"
+                id="link"
                 name="link"
-                placeholder="Link"
                 value="<%= software.link %>"
                 required>
             </div>
-            <button class="btn btn-primary" type="submit">
-              Actualizar
-            </button>
+
+            <!-- Botón de actualizar -->
+            <div class="form-group text-center">
+              <button class="btn btn-primary btn-lg" type="submit">
+                <i class="fas fa-save"></i> Actualizar
+              </button>
+            </div>
           </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <% include partials/_footer %>
