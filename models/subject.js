@@ -5,8 +5,8 @@ const SubjectSchema = new Schema({
     name: { type: String, required: true },
     grade: { type: String, required: true },
     description: {type: String, required: true},
-    students: [{ type: Schema.Types.ObjectId, ref: 'Student' }], // Relación con estudiantes
-    teachers: [{ type: Schema.Types.ObjectId, ref: 'Teacher' }], // Relación con profesores
+    students: [{ type: Schema.Types.ObjectId, ref: 'user' }], // Relación con estudiantes
+    teachers: [{ type: Schema.Types.ObjectId, ref: 'user' }], // Relación con profesores
     study: { type: Schema.Types.ObjectId, ref: 'Study', required: true } // Relación con un área de estudio
 });
 
@@ -47,9 +47,9 @@ SubjectSchema.statics.updateById = async function (id, newData) {
 };
 
 // Método estático para buscar por ID
-SubjectSchema.statics.findById = async function (id) {
+SubjectSchema.statics.findByIdWithPopulation = async function (id) {
     try {
-        return await this.findOne({ _id: id }).populate('students teachers study');
+        return await this.findById(id).populate('students teachers study');
     } catch (error) {
         console.error("Error al buscar por ID:", error);
         throw error;

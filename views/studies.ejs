@@ -3,6 +3,7 @@
 <div class="container">
   <div class="row">
     <!-- FORM -->
+    <% if (user.rol === "admin") { %>
     <div class="col-md-5">
       <div class="card">
         <div class="card-body">
@@ -18,6 +19,7 @@
         </div>
       </div>
     </div>
+    <% } %>
 
     <!-- LISTA -->
     <div class="col-md-7">
@@ -27,7 +29,9 @@
             <th>N°</th>
             <th>Nombre</th>
             <th>Tipo</th>
-            <th>Operaciones</th>
+            <% if (user.rol === "admin") { %>
+              <th>Operaciones</th>
+            <% } %>
           </tr>
         </thead>
         <tbody>
@@ -36,10 +40,12 @@
               <td><%= i + 1 %></td>
               <td><strong><%= studies[i].name %></strong></td>
               <td><%= studies[i].type %></td>
+              <% if (user.rol === "admin") { %>
               <td>
                 <a href="/studies/delete/<%= studies[i]._id %>" class="btn btn-danger">Eliminar</a>
                 <a href="/studies/edit/<%= studies[i]._id %>" class="btn btn-info">Editar</a>
               </td>
+              <% } %>
             </tr>
           <% } %>
         </tbody>
