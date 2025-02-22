@@ -4,7 +4,7 @@ const Software=require('../models/software');
 
 
 //get
-router.get('/softwares', isAuthenticated, async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
     try {
         const softwares = await Software.find().populate('subject');
         res.render('softwares', { softwares });
@@ -15,7 +15,7 @@ router.get('/softwares', isAuthenticated, async (req, res) => {
 });
 
 //post
-router.post('/softwares/add', isAuthenticated, async(req, res, next) => {
+router.post('/add', isAuthenticated, async(req, res, next) => {
     try {
         const software = new Software(req.body);
         software.subject = req.body.subject;
@@ -28,21 +28,32 @@ router.post('/softwares/add', isAuthenticated, async(req, res, next) => {
 });
 
 //editar
-router.get('/softwares/edit/:id', isAuthenticated, async (req, res, next)=>{
-    var software=new Software();
-    software=await software.findById(req.params.id);
-    res.render('edit', {software});
+router.get('/edit/:id', isAuthenticated, async (req, res, next)=>{
+   try {
+           const software = await Software.findById(req.params.id);
+           if (!software) {
+               return res.status(404).send("Software no encontrado");
+           }
+           res.render('edit', { software });
+       } catch (error) {
+           console.error("Error al obtener el software para editar:", error);
+           res.status(500).send("Error interno del servidor");
+       }
 });
 
-router.post('/softwares/edit/:id', isAuthenticated, async (req, res, next)=>{
-    const software=new Software();
-    const{id}=req.params;
-    await software.update(id, req.body);
-    res.redirect('/softwares');
+router.post('/edit/:id', isAuthenticated, async (req, res, next)=>{
+     try {
+            const { id } = req.params;
+            await Software.findByIdAndUpdate(id, req.body, { new: true });
+            res.redirect('/softwares');
+        } catch (error) {
+            console.error("Error al actualizar el software:", error);
+            res.status(500).send("Error interno del servidor");
+        }
 });
 
 //borrar
-router.get('/softwares/delete/:id', isAuthenticated, async(req, res, next)=>{
+router.get('/delete/:id', isAuthenticated, async(req, res, next)=>{
     const software=new Software();
     let{id}=req.params;
     await software.delete(id);
@@ -65,7 +76,7 @@ router.get('/subject/:subjectId', isAuthenticated, async (req, res) => {
 
 
 //buscar
-router.get('/softwares/search', isAuthenticated, async(req, res, next)=>{
+router.get('/search', isAuthenticated, async(req, res, next)=>{
     const software=new Software();
     let search=req.query.search;
     const softwares=await software.findSearch(search, req.subject._id);
