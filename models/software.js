@@ -12,9 +12,9 @@ const SoftwareSchema=Schema({
         required: true,
     },
 
-    subject:[
-        {type:mongoose.Schema.Types.ObjectId, ref:'subject'}
-    ]
+    subject:
+        {type:mongoose.Schema.Types.ObjectId, ref:'Subject'}
+
 });
 
 SoftwareSchema.methods.findAll=async function (subject){
@@ -59,6 +59,5 @@ SoftwareSchema.methods.findSearch=async function(search, subject){
     .catch(error=> console.log(error));
 };
 
-module.exports=mongoose.model('software', SoftwareSchema);
+module.exports=mongoose.model('Software', SoftwareSchema);
 
-//RRRRRRR

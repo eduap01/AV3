@@ -1,62 +1,165 @@
-const express=require('express');
-const router=express.Router();
-const Subject=require('../models/subject');
+const express = require('express');
+const router = express.Router();
+const Subject = require('../models/subject');
+const User = require('../models/user'); // Ahora usamos el modelo User para manejar profesores y alumnos
+const Study = require('../models/study');
+const mongoose = require('mongoose');
 
+// GET - Cargar la página de asignaturas con todos los profesores y estudiantes
+router.get('/', isAuthenticated, async (req, res) => {
+    try {
+        const user = req.user; // Usuario logueado
 
-//get
-router.get('/subject', isAuthenticated, async(req, res) => {
-    const subject=new Subject();
-    const subjects=await subject.findAll(req.subject._id);
-    res.render('subjects', {
-        subjects
-    });
+        let subjects;
+        if (user.rol === "admin") {
+            // Admin ve todas las asignaturas
+            subjects = await Subject.find().populate('study teachers students');
+        } else if (user.rol === "profesor") {
+            // Profesor ve solo las asignaturas en las que está asignado
+            subjects = await Subject.find({ teachers: user._id }).populate('study teachers students');
+        } else if (user.rol === "alumno") {
+            // Alumno ve solo las asignaturas en las que está inscrito
+            subjects = await Subject.find({ students: user._id }).populate('study teachers students');
+        } else {
+            // Otros roles (si los hay) no ven asignaturas
+            subjects = [];
+        }
+
+        // Obtener listas de profesores y alumnos para el formulario
+        const teachers = await User.find({ rol: "profesor" });
+        const students = await User.find({ rol: "alumno" });
+        const studies = await Study.find();
+
+        // Renderizar la vista con los datos filtrados
+        res.render('subjects', {
+            subjects,
+            teachers,
+            students,
+            studies,
+            user
+        });
+    } catch (error) {
+        console.error("Error al obtener las asignaturas:", error);
+        res.status(500).send("Error interno del servidor");
+    }
 });
 
-//post
-router.post('/subject/add', isAuthenticated, async(req, res, next) =>{
-    const subject=new Subject(req.body);
-    subject.subject=req.subject._id;
-    await subject.insert();
-    res.redirect('/subject');
+
+
+// POST - Crear una nueva asignatura
+router.post('/subjects/add', isAuthenticated, async (req, res) => {
+    try {
+        // Extraer datos del formulario (profesores y alumnos seleccionados)
+        const { name, grade, description, teachers, students, study } = req.body;
+
+        // Crear una nueva asignatura con los datos del formulario
+        const newSubject = new Subject({
+            name,
+            grade,
+            description,
+            study,
+            teachers: teachers || [],
+            students: students || []
+        });
+
+        // Guardar la nueva asignatura en la base de datos
+        await newSubject.save();
+
+        // Redirigir a la página de asignaturas
+        res.redirect('/subjects');
+    } catch (error) {
+        console.error("Error al agregar la asignatura:", error);
+        res.status(500).send("Error al agregar la asignatura");
+    }
 });
 
-//editar
-router.get('/subject/edit/:id', isAuthenticated, async (req, res, next)=>{
-    var subject=new Subject();
-    subject=await subject.findById(req.params.id);
-    res.render('edit', {subject});
+// GET - Cargar la página para editar una asignatura
+router.get('/subjects/edit/:id', isAuthenticated, async (req, res) => {
+    try {
+        const subjectId = req.params.id;
+
+        // Buscar la asignatura y poblar relaciones
+        const subject = await Subject.findById(subjectId)
+            .populate('students')
+            .populate('teachers')
+            .populate('study');
+
+        if (!subject) {
+            return res.render('edit_subject', { subject: {}, teachers: [], students: [], studies: [] });
+        }
+
+        // Obtener todos los usuarios con rol de profesor y alumno usando los valores reales
+        const teachers = await User.find({ rol: 'profesor' });
+        const students = await User.find({ rol: 'alumno' });
+        const studies = await Study.find();
+
+        console.log("Subject:", subject);
+                console.log("Teachers:", teachers);
+                console.log("Students:", students);
+                console.log("Studies:", studies);
+
+        res.render('edit_subject', { subject, teachers, students, studies });
+    } catch (error) {
+        console.error("Error al cargar la asignatura para editar:", error);
+        res.render('edit_subject', { subject: {}, teachers: [], students: [], studies: [] });
+    }
 });
 
-router.post('/subject/edit/:id', isAuthenticated, async (req, res, next)=>{
-    const subject=new Subject();
-    const{id}=req.params;
-    await task.update({_id:id}, req.body);
-    res.redirect('/subject');
+
+// POST - Actualizar la asignatura editada
+router.post('/subjects/edit/:id', isAuthenticated, async (req, res) => {
+    try {
+        const { id } = req.params;
+        let { name, grade, description, teachers, students, study } = req.body;
+
+        // Asegurarse de que teachers y students sean arrays válidos
+        const teacherIds = Array.isArray(teachers) ? teachers : teachers ? [teachers] : [];
+        const studentIds = Array.isArray(students) ? students : students ? [students] : [];
+
+        // Convertir los valores de teachers y students a ObjectId usando new
+        const teacherObjectIds = teacherIds.map(teacherId => new mongoose.Types.ObjectId(teacherId)); // <-- Agrega new
+        const studentObjectIds = studentIds.map(studentId => new mongoose.Types.ObjectId(studentId)); // <-- Agrega new
+
+        // Actualizar los datos de la asignatura
+        await Subject.findByIdAndUpdate(id, {
+            name,
+            grade,
+            description,
+            teachers: teacherObjectIds,
+            students: studentObjectIds,
+            study
+        }, { new: true });
+
+        res.redirect('/subjects');
+    } catch (error) {
+        console.error("Error al actualizar la asignatura:", error);
+        res.status(500).send("Error al actualizar la asignatura");
+    }
 });
 
-//borrar
-router.get('/subject/delete/:id', isAuthenticated, async(req, res, next)=>{
-    const subject=new Subject();
-    let{id}=req.params;
-    await task.delete(id);
-    res.redirect('/subject');
+//
+
+
+// GET - Eliminar una asignatura
+router.get('/subjects/delete/:id', isAuthenticated, async (req, res) => {
+    try {
+        // Eliminar la asignatura
+        await Subject.findByIdAndDelete(req.params.id);
+
+        // Redirigir a la página de asignaturas
+        res.redirect('/subjects');
+    } catch (error) {
+        console.error("Error al eliminar la asignatura:", error);
+        res.status(500).send("Error al eliminar la asignatura");
+    }
 });
 
-//buscar
-router.get('subject/search', isAuthenticated, async(req, res, next)=>{
-    const subject=new Subject();
-    let search=req.query.search;
-    const subjects=await subject.findSearch(search, req.subject._id);
-    res.render('subject', {
-        subjects
-    });
-});
-
+// Middleware de autenticación
 function isAuthenticated(req, res, next) {
-  if(req.isAuthenticated()) {
-    return next();
-  }
-
-  res.redirect('/')
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/');
 }
+
 module.exports = router;

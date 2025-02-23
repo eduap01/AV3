@@ -2,67 +2,66 @@
 
 <div class="container">
   <div class="row">
-    <!--FORM-->
+    <!--formulario-->
+    <% if (user.rol === "admin" || user.rol === "profesor") { %>
     <div class="col-md-5">
       <div class="card">
         <div class="card-body">
           <form action="/softwares/add" method="post">
+
             <div class="form-group">
-              <input class="form-control" type="text" name="title" placeholder="Title">
+              <textarea class="form-control" name="description" cols="80" placeholder="Añade una descripción" required></textarea>
             </div>
+
             <div class="form-group">
-              <textsoftware class="form-control" name="description" cols="80"
-                placeholder="añade una descripción"
-                ></textsoftware>
+              <input class="form-control" type="text" name="link" placeholder="Añade el enlace" required>
             </div>
-        <div class="form-group">
-                      <textsoftware class="form-control" name="link" cols="80"
-                        placeholder="añade el link"
-                        ></textsoftware>
-                    </div>
-            <button class="btn btn-primary" type="submit">
-              Add
-            </button>
+            <% if (typeof subject !== 'undefined') { %>
+            <input type="hidden" name="subject" value="<%= subject._id %>">
+            <% } %>
+
+            <button class="btn btn-primary" type="submit">Añadir</button>
           </form>
         </div>
       </div>
     </div>
+    <% } %>
 
-    <!-- LIST -->
+    <!-- lista -->
     <div class="col-md-7">
       <table class="table table-bordered table-hover">
         <thead>
           <tr>
             <th>N°</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Operations</th>
+            <th>Descripción</th>
+            <th>Enlace</th>
+            <th>Operaciones</th>
           </tr>
         </thead>
         <tbody>
-          <% for(var i=0; i < softwares.length; i++) { %>
-            <tr>
-              <td><%= i + 1%></td>
-              <td><strong><%= softwares[i].description %></strong></td>
-              <td><%= softwares[i].link %></td>
-              <td>
-
-                <a href="/softwares/delete/<%= softwares[i]._id %>"
-                  class="btn btn-danger">
-                  Delete
-                </a>
-                <a href="/softwares/edit/<%= softwares[i]._id %>" class="btn btn-info">
-                  Edit
-                </a>
-              </td>
-            </tr>
-          <% } %>
+         <% if (softwares.length > 0) { %>
+           <% softwares.forEach((software, index) => { %>
+             <tr>
+               <td><%= index + 1 %></td>
+               <td><strong><%= software.description %></strong></td>
+               <td><%= software.link %></td>
+                 <% if (user.rol === "admin" || user.rol === "profesor") { %>
+               <td>
+                 <a href="/softwares/delete/<%= software._id %>" class="btn btn-danger">Eliminar</a>
+                 <a href="/softwares/edit/<%= software._id %>" class="btn btn-info">Editar</a>
+               </td>
+            <% } %>
+             </tr>
+           <% }); %>
+         <% } else { %>
+           <tr>
+             <td colspan="4" class="text-center">No hay softwares registrados para esta materia.</td>
+           </tr>
+         <% } %>
         </tbody>
       </table>
-
     </div>
   </div>
-
 </div>
 
 <% include partials/_footer %>

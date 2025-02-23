@@ -1,30 +1,40 @@
 <% include partials/_header %>
 
-
-
 <div class="col-md-7 mx-auto">
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th class="mx-auto text-center"colspan="2">Usuario</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr>
-            <th>ID</th>
-            <td><%= user._id%></td>
-          </tr>
-          <tr>
-            <th>Email</th>
-            <td><%= user.email%></td>
-          </tr>
-          <tr>
-            <th>Password</th>
-            <td><%= user.password%></td>
-          </tr>
-      </tbody>
-    </table>
-
-  </div>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="mx-auto text-center" colspan="2">Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>ID</th>
+        <td><%= user._id %></td>
+      </tr>
+      <tr>
+        <th>Nombre</th>
+        <td><%= user.name %></td>
+      </tr>
+      <tr>
+        <th>Apellidos</th>
+        <td><%= user.surname %></td>
+      </tr>
+      <tr>
+        <th>Rol</th>
+        <td><%= user.rol %></td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td><%= user.email %></td>
+      </tr>
+      <tr>
+        <th>Password</th>
+        <td><%= user.password %></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
+
+
 <% include partials/_footer %>
