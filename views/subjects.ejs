@@ -91,20 +91,12 @@
               <td><%= subject.grade %></td>
               <td>
                 <% subject.teachers.forEach(teacher => { %>
-                    <%teachers.forEach(teacher1 => { %>
-                        <%if(teacher.toString()==teacher1._id.toString()){ %>
-                  <span><%= teacher1.name+" "+teacher1.surname %></span>
-                  <% } %>
-                <% }); %>
+                  <span><%= teacher.name + " " + teacher.surname %></span><br>
                 <% }); %>
               </td>
               <td>
                 <% subject.students.forEach(student => { %>
-                  <% students.forEach(student1 => { %>
-                    <% if(student.toString()==student1._id.toString()){ %>
-                  <span ><%= student1.name+" "+student1.surname %></span>
-                                  <% } %>
-                    <% }); %>
+                  <span><%= student.name + " " + student.surname %></span><br>
                 <% }); %>
               </td>
               <% if (user.rol === "admin" || user.rol === "profesor") { %>
