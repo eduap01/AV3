@@ -2,7 +2,7 @@
 
 <div class="container">
   <div class="row">
-    <!--FORM-->
+    <!--formulario-->
     <% if (user.rol === "admin" || user.rol === "profesor") { %>
     <div class="col-md-5">
       <div class="card">
@@ -16,8 +16,6 @@
             <div class="form-group">
               <input class="form-control" type="text" name="link" placeholder="Añade el enlace" required>
             </div>
-
-            <!-- Campo oculto para la asignatura -->
             <% if (typeof subject !== 'undefined') { %>
             <input type="hidden" name="subject" value="<%= subject._id %>">
             <% } %>
@@ -29,7 +27,7 @@
     </div>
     <% } %>
 
-    <!-- LIST -->
+    <!-- lista -->
     <div class="col-md-7">
       <table class="table table-bordered table-hover">
         <thead>

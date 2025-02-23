@@ -6,22 +6,45 @@ const Study = require('../models/study');
 const mongoose = require('mongoose');
 
 // GET - Cargar la página de asignaturas con todos los profesores y estudiantes
-router.get('/subjects', isAuthenticated, async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
     try {
-        // Obtener todas las asignaturas con los usuarios (profesores y alumnos)
-        const subjects = await Subject.find(). populate('study');
-        // Obtener todos los profesores y alumnos desde el modelo User
-        const teachers = await User.find({ rol: 'profesor' });
-        const students = await User.find({ rol: 'alumno' });
+        const user = req.user; // Usuario logueado
+
+        let subjects;
+        if (user.rol === "admin") {
+            // Admin ve todas las asignaturas
+            subjects = await Subject.find().populate('study teachers students');
+        } else if (user.rol === "profesor") {
+            // Profesor ve solo las asignaturas en las que está asignado
+            subjects = await Subject.find({ teachers: user._id }).populate('study teachers students');
+        } else if (user.rol === "alumno") {
+            // Alumno ve solo las asignaturas en las que está inscrito
+            subjects = await Subject.find({ students: user._id }).populate('study teachers students');
+        } else {
+            // Otros roles (si los hay) no ven asignaturas
+            subjects = [];
+        }
+
+        // Obtener listas de profesores y alumnos para el formulario
+        const teachers = await User.find({ rol: "profesor" });
+        const students = await User.find({ rol: "alumno" });
         const studies = await Study.find();
 
-        // Renderizar la vista y pasar los datos
-        res.render('subjects', { subjects, teachers, students, studies });
+        // Renderizar la vista con los datos filtrados
+        res.render('subjects', {
+            subjects,
+            teachers,
+            students,
+            studies,
+            user
+        });
     } catch (error) {
-        console.error("Error al obtener los datos:", error);
+        console.error("Error al obtener las asignaturas:", error);
         res.status(500).send("Error interno del servidor");
     }
 });
+
+
 
 // POST - Crear una nueva asignatura
 router.post('/subjects/add', isAuthenticated, async (req, res) => {
