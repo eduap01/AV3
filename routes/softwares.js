@@ -58,7 +58,7 @@ router.post('/edit/:id', isAuthenticated, async (req, res) => {
         const updatedSoftware = await Software.findByIdAndUpdate(
             id,
             { description, link },
-            { new: true }
+            { new: true })
         if (!updatedSoftware) {
             return res.status(404).send("Software no encontrado");
         }
