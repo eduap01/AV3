@@ -2,7 +2,7 @@
 
 <div class="container">
   <div class="row">
-    <!--FORM-->
+    <!--formulario-->
     <% if (user.rol === "admin" || user.rol === "profesor") { %>
     <div class="col-md-5">
       <div class="card">
@@ -14,10 +14,8 @@
             </div>
 
             <div class="form-group">
-              <input class="form-control" type="text" name="link" placeholder="Añade el link" required>
+              <input class="form-control" type="text" name="link" placeholder="Añade el enlace" required>
             </div>
-
-            <!-- Campo oculto para la asignatura -->
             <% if (typeof subject !== 'undefined') { %>
             <input type="hidden" name="subject" value="<%= subject._id %>">
             <% } %>
@@ -29,7 +27,7 @@
     </div>
     <% } %>
 
-    <!-- LIST -->
+    <!-- lista -->
     <div class="col-md-7">
       <table class="table table-bordered table-hover">
         <thead>
@@ -47,10 +45,12 @@
                <td><%= index + 1 %></td>
                <td><strong><%= software.description %></strong></td>
                <td><%= software.link %></td>
+                 <% if (user.rol === "admin" || user.rol === "profesor") { %>
                <td>
                  <a href="/softwares/delete/<%= software._id %>" class="btn btn-danger">Eliminar</a>
                  <a href="/softwares/edit/<%= software._id %>" class="btn btn-info">Editar</a>
                </td>
+            <% } %>
              </tr>
            <% }); %>
          <% } else { %>
