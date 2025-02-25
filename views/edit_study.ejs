@@ -7,8 +7,12 @@
       <div class="card">
         <div class="card-body">
           <form action="/studies/edit/<%= study._id %>" method="post">
+
+            <!-- Nombre -->
             <div class="form-group">
+              <label for="name">Nombre</label>
               <input
+                id="name"
                 class="form-control"
                 type="text"
                 name="name"
@@ -16,8 +20,12 @@
                 value="<%= study.name %>"
                 required>
             </div>
+
+            <!-- Tipo -->
             <div class="form-group">
+              <label for="type">Tipo</label>
               <input
+                id="type"
                 class="form-control"
                 type="text"
                 name="type"
@@ -25,6 +33,7 @@
                 value="<%= study.type %>"
                 required>
             </div>
+
             <button class="btn btn-primary" type="submit">
               Actualizar
             </button>
