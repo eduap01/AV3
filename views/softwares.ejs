@@ -1,13 +1,13 @@
 <% include partials/_header %>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-4">
   <div class="row">
     <!-- FORMULARIO (Solo para admin o profesor) -->
     <% if (user.rol === "admin" || user.rol === "profesor") { %>
     <div class="col-12 col-md-5 mb-4">
       <div class="card">
         <div class="card-body">
-          <form action="/softwares/add" method="post">
+          <form action="/softwares/add" method="post" enctype="multipart/form-data">
             <div class="form-group mb-3">
               <textarea class="form-control" name="description" cols="80" placeholder="Añade una descripción" required></textarea>
             </div>
@@ -17,6 +17,7 @@
             <div class="form-group mb-3">
                 <label for="archive">Subir archivo</label>
                 <input class="form-control" type="file" name="archive" placeholder="Añade el archivo">
+                <small class="form-text text-muted">Tamaño máximo: 5MB</small>
             </div>
             <!-- Campo oculto para la asignatura -->
             <% if (typeof subject !== 'undefined') { %>
@@ -52,8 +53,8 @@
                   <td><%= software.link %></td>
                   <td>
                       <% if (software.archive) { %>
-                            <a href="/files/<%= software.archive %>" download="<%= software.archive %>">
-                                <%= software.archive %>
+                            <a href="/files/<%= software.archive %>" download="<%= software.archive %>" title="<%= software.archive %>">
+                                <%= software.archive.length > 20 ? software.archive.substring(0, 20) + '...' : software.archive %>
                             </a>
                         <% } else { %>
                         <em>No hay archivo</em>
@@ -67,7 +68,7 @@
               <% }); %>
             <% } else { %>
               <tr>
-                <td colspan="4" class="text-center">No hay softwares registrados para esta materia.</td>
+                <td colspan="5" class="text-center">No hay softwares registrados para esta materia.</td>
               </tr>
             <% } %>
           </tbody>
