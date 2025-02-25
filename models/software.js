@@ -12,6 +12,10 @@ const SoftwareSchema=Schema({
         required: true,
     },
 
+    archive: {
+        type: String
+    },
+
     subject:
         {type:mongoose.Schema.Types.ObjectId, ref:'Subject'}
 

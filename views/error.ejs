@@ -1,12 +1,29 @@
 <% include partials/_header %>
+
 <style>
-    h1{
+    h1 {
         text-align: center;
-        color:red;
+        color: red;
+        margin-top: 50px;
+    }
+    .message {
+        text-align: center;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+    .btn-home {
+        display: block;
+        width: 200px;
+        margin: 20px auto;
+        text-align: center;
     }
 </style>
-<h1 >Página no encontrada</h1>
+
+<h1>Página no encontrada</h1>
+
+<div class="message">
+    <p>Lo sentimos, la página que buscas no existe.</p>
+    <a href="/" class="btn btn-primary btn-home">Volver a la página principal</a>
+</div>
 
 <% include partials/_footer %>
-
-

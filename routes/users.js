@@ -5,6 +5,7 @@ const User = require('../models/user');
 // Página de inicio de sesión
 router.get('/signin', (req, res) => {
   res.render('signin');
+
 });
 
 router.post('/signin', passport.authenticate('local-signin', {
@@ -28,6 +29,8 @@ router.get('/logout', (req, res, next) => {
 
 // Obtener todos los usuarios
 router.get('/users', isAuthenticated, async (req, res) => {
+if(req.user.rol == "admin"){
+
   try {
     const users = await User.find();
     res.render('users', { users });
@@ -35,6 +38,9 @@ router.get('/users', isAuthenticated, async (req, res) => {
     console.error(error);
     res.status(500).send('Error al obtener los usuarios');
   }
+    }else{
+        res.redirect('/');
+    }
 });
 
 // Añadir un usuario
@@ -48,6 +54,7 @@ router.post('/users/add', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al agregar el usuario');
+    res.redirect('/users');
   }
 });
 
@@ -91,6 +98,7 @@ router.post('/users/edit/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al actualizar el usuario');
+    res.redirect('/users');
   }
 });
 
@@ -103,6 +111,7 @@ router.get('/users/delete/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al eliminar el usuario');
+    res.redirect('/users');
   }
 });
 
