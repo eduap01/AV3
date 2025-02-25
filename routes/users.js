@@ -54,7 +54,7 @@ router.post('/users/add', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al agregar el usuario');
-     res.redirect('/');
+    res.redirect('/users');
   }
 });
 
@@ -98,7 +98,7 @@ router.post('/users/edit/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al actualizar el usuario');
-    res.redirect('/');
+    res.redirect('/users');
   }
 });
 
@@ -111,7 +111,7 @@ router.get('/users/delete/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al eliminar el usuario');
-    res.redirect('/');
+    res.redirect('/users');
   }
 });
 
