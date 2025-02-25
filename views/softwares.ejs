@@ -11,17 +11,13 @@
             <div class="form-group mb-3">
               <textarea class="form-control" name="description" cols="80" placeholder="Añade una descripción" required></textarea>
             </div>
-
             <div class="form-group mb-3">
               <input class="form-control" type="text" name="link" placeholder="Añade el link" required>
             </div>
-
             <div class="form-group mb-3">
                 <label for="archive">Subir archivo</label>
                 <input class="form-control" type="file" name="archive" placeholder="Añade el archivo">
             </div>
-
-
             <!-- Campo oculto para la asignatura -->
             <% if (typeof subject !== 'undefined') { %>
             <input type="hidden" name="subject" value="<%= subject._id %>">
@@ -33,8 +29,6 @@
       </div>
     </div>
     <% } %>
-
-
     <!-- LISTA DE SOFTWARES -->
     <div class="col-12 col-md-7">
       <h3 class="text-center">Lista de Softwares</h3>
