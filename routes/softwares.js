@@ -3,6 +3,18 @@ const router=express.Router();
 const Software=require('../models/software');
 const Subject = require('../models/subject');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+
+//cacharro de los mails
+let transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth:{
+    user: 'cuenta.aula.datos@gmail.com',
+    pass: 'tyxx wecf pgyx maes'
+  }
+});
 
 
 //get
@@ -22,6 +34,17 @@ router.post('/add', isAuthenticated, async(req, res, next) => {
         const software = new Software(req.body);
         software.subject = req.body.subject;
         await software.save();
+
+        //mandar el mensaje cuando se crea un software a todos los alumnos de la asignatura
+        let mensaje = `Software añadido\nDescripción: ${software.description}\n Link: ${software.link}\n`;
+         let mailOptions = {
+          from: 'cuenta.aula.datos@gmail.com',
+          to: req.user.email,
+          subject: 'Software añadido: '+software.description,
+          text: mensaje
+         };
+
+
         res.redirect(`/softwares/subject/${req.body.subject}`);
     } catch (error) {
         console.error("Error al agregar software:", error);
