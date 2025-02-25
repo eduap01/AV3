@@ -1,17 +1,37 @@
 <% include partials/_header %>
-<div class="col-md-5">
-  <div class="card">
-    <div class="card-body">
-<form action="/signin" method="POST">
-  <input type="email" name="email" placeholder="Email">
-  <input type="password" name="password" placeholder="Password">
-  <button class="btn btn-primary" type="submit">
-    SignIn
-  </button>
-</form>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="text-center mb-4">Iniciar Sesión</h3>
+          <form action="/signin" method="POST">
+            <!-- Campo de correo electrónico -->
+            <div class="form-group mb-3">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+            </div>
+
+            <!-- Campo de contraseña -->
+            <div class="form-group mb-3">
+              <label for="password">Contraseña</label>
+              <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña" required>
+            </div>
+
+            <!-- Botón de enviar -->
+            <button class="btn btn-primary w-100" type="submit">Iniciar Sesión</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (signinMessage) { %>
+    <div class="alert alert-danger mt-3" role="alert">
+      <%= signinMessage %>
+    </div>
+  <% } %>
 </div>
-</div></div>
-<%if (signinMessage) {%>
-  <p style="color:#FF0000;"><%= signinMessage %></p>
-<% } %>
+
 <% include partials/_footer %>
