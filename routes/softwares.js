@@ -110,8 +110,6 @@ router.post('/edit/:id', isAuthenticated, async (req, res) => {
         const updatedSoftware = await Software.findByIdAndUpdate(
             id,
             { description, link },
-            { new: true }
-            )
             { new: true })
 
         if (!updatedSoftware) {
