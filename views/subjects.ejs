@@ -117,9 +117,6 @@
                   <a href="/subjects/edit/<%= subject._id %>" class="btn btn-info btn-sm">Editar</a>
                   <a href="/subjects/delete/<%= subject._id %>" class="btn btn-danger btn-sm">Eliminar</a>
                 <% } %>
-                <% if (user.rol === "profesor") { %>
-                  <a href="/subjects/edit/<%= subject._id %>" class="btn btn-info btn-sm">Editar</a>
-                <% } %>
               </td>
               <% } %>
             </tr>
