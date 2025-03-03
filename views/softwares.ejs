@@ -60,10 +60,14 @@
                         <em>No hay archivo</em>
                         <% } %>
                   </td>
+              <% if (user.rol === "admin" || user.rol === "profesor") { %>
                   <td>
+
                     <a href="/softwares/delete/<%= software._id %>" class="btn btn-danger btn-sm">Eliminar</a>
                     <a href="/softwares/edit/<%= software._id %>" class="btn btn-info btn-sm">Editar</a>
+
                   </td>
+              <% } %>
                 </tr>
               <% }); %>
             <% } else { %>
