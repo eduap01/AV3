@@ -112,7 +112,7 @@ router.post('/edit/:id', isAuthenticated, async (req, res) => {
             { description, link },
             { new: true }
             )
-            { new: true })
+
 
         if (!updatedSoftware) {
             return res.status(404).send("Software no encontrado");
