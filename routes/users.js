@@ -2,50 +2,26 @@ const router = require('express').Router();
 const passport = require('passport');
 const User = require('../models/user');
 
-// Página de inicio de sesión
-router.get('/signin', (req, res) => {
-  res.render('signin');
-
-});
-
-router.post('/signin', passport.authenticate('local-signin', {
-  successRedirect: '/profile',
-  failureRedirect: '/signin',
-  failureFlash: true
-}));
-
-// Perfil del usuario
-router.get('/profile', isAuthenticated, (req, res) => {
-  res.render('profile');
-});
-
-// Cerrar sesión
-router.get('/logout', (req, res, next) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect('/');
-  });
-});
-
 // Obtener todos los usuarios
 router.get('/users', isAuthenticated, async (req, res) => {
-if(req.user.rol == "admin"){
-
-  try {
-    const users = await User.find();
-    res.render('users', { users });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error al obtener los usuarios');
-  }
-    }else{
-        res.redirect('/');
+  if (req.user.rol === "admin") {
+    try {
+      const users = await User.find();
+      console.log("Users:", users); // Depuración
+      res.render('users', { users });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error al obtener los usuarios');
     }
+  } else {
+    res.redirect('/');
+  }
 });
 
 // Añadir un usuario
 router.post('/users/add', isAuthenticated, async (req, res) => {
   try {
+    console.log("Body:", req.body); // Depuración
     const user = new User(req.body);
     user.password = user.encryptPassword(user.password);
     user.usuario = req.user._id;
@@ -54,7 +30,6 @@ router.post('/users/add', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al agregar el usuario');
-    res.redirect('/users');
   }
 });
 
@@ -74,6 +49,7 @@ router.get('/users/edit/:id', isAuthenticated, async (req, res) => {
 
 router.post('/users/edit/:id', isAuthenticated, async (req, res) => {
   try {
+    console.log("Body:", req.body); // Depuración
     const { id } = req.params;
     let { email, password, rol, name, surname, subjects } = req.body;
 
@@ -98,7 +74,6 @@ router.post('/users/edit/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al actualizar el usuario');
-    res.redirect('/users');
   }
 });
 
@@ -111,7 +86,6 @@ router.get('/users/delete/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al eliminar el usuario');
-    res.redirect('/users');
   }
 });
 
@@ -119,6 +93,7 @@ router.get('/users/delete/:id', isAuthenticated, async (req, res) => {
 router.get('/users/search', isAuthenticated, async (req, res) => {
   try {
     const search = req.query.search;
+    console.log("Search term:", search); // Depuración
     const users = await User.find({
       $or: [
         { name: new RegExp(search, 'i') },
@@ -132,6 +107,7 @@ router.get('/users/search', isAuthenticated, async (req, res) => {
   }
 });
 
+// Middleware de autenticación
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();

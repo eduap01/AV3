@@ -29,10 +29,20 @@ router.get('/', isAuthenticated, async (req, res) => {
 });
 
 //post
-/*router.post('/add', isAuthenticated, async(req, res, next) => {
+router.post('/add', isAuthenticated, async(req, res, next) => {
     try {
         const software = new Software(req.body);
         software.subject = req.body.subject;
+         // Verifica si se subió un archivo
+                if (req.files && req.files.archive) {
+                    let archive = req.files.archive;
+                    let uploadPath = `./files/${archive.name}`;
+
+                    // Mueve el archivo a la carpeta de destino
+                    await archive.mv(uploadPath);
+                    software.archive = archive.name; // Guarda el nombre del archivo en el objeto
+                }
+
         await software.save();
 
         //obtengo todos los emails de los alumnos
@@ -56,9 +66,9 @@ router.get('/', isAuthenticated, async (req, res) => {
         console.error("Error al agregar software:", error);
         res.status(500).send("Error al agregar software");
     }
-});*/
+});
 
-router.post('/add', isAuthenticated, async (req, res, next) => {
+/*router.post('/add', isAuthenticated, async (req, res, next) => {
     try {
         const software = new Software(req.body);
         software.subject = req.body.subject;
@@ -79,7 +89,7 @@ router.post('/add', isAuthenticated, async (req, res, next) => {
         console.error("Error al agregar software:", error);
         res.status(500).send("Error al agregar software");
     }
-});
+});*/
 
 //editar
 router.get('/edit/:id', isAuthenticated, async (req, res) => {
