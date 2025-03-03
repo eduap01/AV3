@@ -34,6 +34,11 @@
                     <a class="nav-link" href="/users">Usuarios</a>
                   </li>
                 <% } %>
+                 <% if (user.rol === "alumno") { %>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/suggestions">Sugerencias</a>
+                        </li>
+                    <% } %>
                 <li class="nav-item">
                   <a class="nav-link" href="/profile">Perfil <%= user.email %></a>
                 </li>
