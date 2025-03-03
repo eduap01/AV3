@@ -2,6 +2,33 @@ const router = require('express').Router();
 const passport = require('passport');
 const User = require('../models/user');
 
+
+
+// Página de inicio de sesión
+router.get('/signin', (req, res) => {
+  res.render('signin');
+
+});
+
+router.post('/signin', passport.authenticate('local-signin', {
+  successRedirect: '/profile',
+  failureRedirect: '/signin',
+  failureFlash: true
+}));
+
+// Perfil del usuario
+router.get('/profile', isAuthenticated, (req, res) => {
+  res.render('profile');
+});
+
+// Cerrar sesión
+router.get('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
+
 // Obtener todos los usuarios
 router.get('/users', isAuthenticated, async (req, res) => {
   if (req.user.rol === "admin") {

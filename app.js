@@ -48,8 +48,6 @@ app.use(fileUpload());
 app.use((req, res, next) => {
   app.locals.signinMessage = req.flash('signinMessage');
   app.locals.user = req.user;
-  res.locals.successMessage = req.flash('successMessage');
-  res.locals.errorMessage = req.flash('errorMessage');
   next();
 });
 
