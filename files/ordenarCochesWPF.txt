@@ -1,0 +1,62 @@
+private void cbOrdenarCoches_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (cbOrdenarCoches.SelectedItem is ComboBoxItem selectedItem)
+    {
+        string ordenSeleccionado = selectedItem.Content.ToString();
+        string query = "SELECT * FROM Vehiculo";
+
+        // Construir la consulta SQL según el criterio de ordenación
+        if (ordenSeleccionado == "Precio")
+        {
+            query += " ORDER BY CAST(Precio AS DECIMAL)"; // Asegúrate de que Precio es numérico en la BD
+        }
+        else if (ordenSeleccionado == "Combustible")
+        {
+            query += " ORDER BY Combustible";
+        }
+
+        // Obtener los datos ordenados desde la base de datos
+        List<Coche> cochesOrdenados = EjecutarConsultaCoches(query);
+
+        // Asignar la lista ordenada al ListView
+        lvCoches.ItemsSource = cochesOrdenados;
+    }
+}
+Paso 2: Crear un método para ejecutar consultas SQL
+Este método te permite obtener una lista de coches desde una consulta SQL.
+
+csharp
+Copiar
+Editar
+private List<Coche> EjecutarConsultaCoches(string query)
+{
+    List<Coche> coches = new List<Coche>();
+
+    try
+    {
+        SqlDataAdapter adaptador = new SqlDataAdapter(query, miConexionSql);
+        DataTable miTabla = new DataTable();
+        adaptador.Fill(miTabla);
+
+        foreach (DataRow row in miTabla.Rows)
+        {
+            Coche coche = new Coche
+            {
+                Id = Convert.ToInt32(row["Id"]),
+                Marca = row["Marca"].ToString(),
+                Modelo = row["Modelo"].ToString(),
+                Version = row["Version"].ToString(),
+                Combustible = row["Combustible"].ToString(),
+                Precio = row["Precio"].ToString(),
+                ImagePath = row["Imagen"].ToString()
+            };
+            coches.Add(coche);
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show($"Error al ejecutar la consulta: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
+    return coches;
+}

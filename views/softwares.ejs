@@ -26,6 +26,21 @@
 
             <button class="btn btn-primary w-100" type="submit">Añadir</button>
           </form>
+      <!-- Upload CSV -->
+            <div class="card mt-3">
+              <div class="card-body">
+                <h5 class="card-title">Upload CSV</h5>
+                <form action="/addSoftwaresCSV" method="post" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="csvFile">Select CSV File</label>
+                    <input id="csvFile" class="form-control-file" type="file" name="archive" accept=".csv" required>
+                  </div>
+                  <button class="btn btn-primary btn-block mt-3" type="submit">Upload CSV</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

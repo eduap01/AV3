@@ -4,6 +4,8 @@ const Software=require('../models/software');
 const Subject = require('../models/subject');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
+const csv = require('csv-parser');
+const fs = require('fs');
 
 //cacharro de los mails
 let transporter = nodemailer.createTransport({
@@ -184,6 +186,59 @@ router.get('/search', isAuthenticated, async(req, res, next)=>{
         softwares
     });
 });
+
+// Subir tareas desde un archivo CSV
+router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
+  try {
+    if (!req.files || !req.files.archive) {
+      return res.status(400).send('No se subió ningún archivo');
+    }
+
+    const fileSoftwares = req.files.archive;
+    const filePath = `./files/softwares/${fileSoftwares.name}`;
+
+    await fileSoftwares.mv(filePath);
+    await readCSVFile(filePath, req.user._id);
+
+    res.redirect('/softwares');
+  } catch (error) {
+    console.error('Error al subir CSV:', error);
+    res.status(500).send('Error al subir archivo CSV');
+  }
+});
+
+const readCSVFile = async (fileName, user) => {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    fs.createReadStream(fileName)
+      .pipe(csv({ headers: true, separator: ',' }))
+      .on('data', (data) => results.push(data))
+      .on('end', async () => {
+        console.log("Datos leídos:", results); // Verifica que todas las filas se están leyendo
+        for (const softwareData of results) {
+          const software = new Software({
+            description: softwareData.description,
+            link: softwareData.link
+          });
+
+          try {
+            await software.save();
+            console.log("Software guardado correctamente:", software);
+          } catch (error) {
+            console.error("Error al guardar software:", error);
+          }
+        }
+        console.log('CSV procesado correctamente');
+        resolve();
+      })
+      .on('error', (error) => {
+        console.error("Error al leer CSV:", error);
+        reject(error);
+      });
+  });
+};
+
+
 
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
