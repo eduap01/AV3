@@ -13,15 +13,27 @@
                   <input class="form-control" type="text" name="password" placeholder="Contraseña" required>
               </div>
               <div class="form-group mb-3">
-                  <input class="form-control" type="text" name="rol" placeholder="Rol" required>
+                  <label>Rol:</label><br>
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="rol" id="rolAdmin" value="admin" required>
+                      <label class="form-check-label" for="rolAdmin">Administrador</label>
+                  </div>
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="rol" id="rolProfesor" value="profesor">
+                      <label class="form-check-label" for="rolProfesor">Profesor</label>
+                  </div>
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="rol" id="rolAlumno" value="alumno">
+                      <label class="form-check-label" for="rolAlumno">Alumno</label>
+                  </div>
               </div>
-            <div class="form-group mb-3">
-              <input class="form-control" type="text" name="name" placeholder="Nombre" required>
-            </div>
-            <div class="form-group mb-3">
-                <input class="form-control" type="text" name="surname" placeholder="Apellidos" required>
-            </div>
-            <button class="btn btn-primary w-100" type="submit">Agregar</button>
+              <div class="form-group mb-3">
+                  <input class="form-control" type="text" name="name" placeholder="Nombre" required>
+              </div>
+              <div class="form-group mb-3">
+                  <input class="form-control" type="text" name="surname" placeholder="Apellidos" required>
+              </div>
+              <button class="btn btn-primary w-100" type="submit">Agregar</button>
           </form>
         </div>
       </div>
