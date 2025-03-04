@@ -4,6 +4,8 @@ const Software=require('../models/software');
 const Subject = require('../models/subject');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
+const csv = require('csv-parser');
+const fs = require('fs');
 
 //cacharro de los mails
 let transporter = nodemailer.createTransport({
@@ -186,6 +188,111 @@ router.get('/search', isAuthenticated, async(req, res, next)=>{
         softwares
     });
 });
+
+// Subir tareas desde un archivo CSV
+/*router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
+  try {
+    if (!req.files || !req.files.archive) {
+      return res.status(400).send('No se subió ningún archivo');
+    }
+
+    const fileSoftwares = req.files.archive;
+    const filePath = `./files/softwares/${fileSoftwares.name}`;
+
+    await fileSoftwares.mv(filePath);
+    await readCSVFile(filePath, req.user._id);
+
+    res.redirect('/softwares');
+  } catch (error) {
+    console.error('Error al subir CSV:', error);
+    res.status(500).send('Error al subir archivo CSV');
+  }
+});*/
+
+router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
+  try {
+    if (!req.files || !req.files.archive) {
+      return res.status(400).send('No se subió ningún archivo');
+    }
+
+    const subjectId = req.body.subject; // Aquí se obtiene el subjectId del formulario
+    if (!subjectId) {
+      return res.status(400).send('No se proporcionó una asignatura');
+    }
+
+    const fileSoftwares = req.files.archive;
+    const filePath = `./files/softwares/${fileSoftwares.name}`;
+
+    await fileSoftwares.mv(filePath);
+
+    // Procesar CSV con el subjectId
+    await readCSVFile(filePath, subjectId);
+
+    // Redirigir a la página correcta
+    res.redirect(`/softwares/subject/${subjectId}`);
+
+  } catch (error) {
+    console.error('Error al subir CSV:', error);
+    res.status(500).send('Error al subir archivo CSV');
+  }
+});
+
+const readCSVFile = async (fileName, subjectId) => {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    fs.createReadStream(fileName)
+      .pipe(csv({ headers: ['description', 'link'], separator: ',' }))
+      .on('data', (data) => results.push(data))
+      .on('end', async () => {
+        console.log("Datos leídos:", results);
+
+        for (const softwareData of results) {
+          if (!softwareData.description || !softwareData.link) {
+            console.error("Error: El CSV no contiene los campos requeridos.");
+            continue;
+          }
+
+          const software = new Software({
+            description: softwareData.description,
+            link: softwareData.link,
+            subject: subjectId // Usamos el ID de la asignatura proporcionado
+          });
+
+          try {
+            await software.save();
+            console.log("Software guardado correctamente:", software);
+
+            // Obtener emails de los alumnos de la asignatura
+            const subject = await Subject.findById(subjectId).populate('students').exec();
+            if (subject) {
+              const emails = subject.students.map(student => student.email);
+
+              // Enviar notificación por email
+              let mensaje = `Software añadido\nDescripción: ${software.description}\nLink: ${software.link}\n`;
+              let mailOptions = {
+                from: 'cuenta.aula.datos@gmail.com',
+                to: emails.join(', '),
+                subject: 'Software añadido: ' + software.description,
+                text: mensaje
+              };
+
+              await transporter.sendMail(mailOptions);
+            }
+
+          } catch (error) {
+            console.error("Error al guardar software:", error);
+          }
+        }
+
+        console.log('CSV procesado correctamente');
+        resolve();
+      })
+      .on('error', (error) => {
+        console.error("Error al leer CSV:", error);
+        reject(error);
+      });
+  });
+};
 
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
