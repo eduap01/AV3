@@ -26,7 +26,7 @@
 
             <button class="btn btn-primary w-100" type="submit">Añadir</button>
           </form>
-      <!-- Upload CSV -->
+      <!-- Upload CSV
             <div class="card mt-3">
               <div class="card-body">
                 <h5 class="card-title">Upload CSV</h5>
@@ -39,7 +39,29 @@
                 </form>
               </div>
             </div>
-          </div>
+          </div>-->
+
+          <form action="/addSoftwaresCSV" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="csvFile">Select CSV File</label>
+              <input id="csvFile" class="form-control-file" type="file" name="archive" accept=".csv" required>
+            </div>
+
+            <!-- Campo oculto para enviar subjectId desde la URL -->
+            <input type="hidden" id="subject" name="subject" value="">
+
+            <button class="btn btn-primary btn-block mt-3" type="submit">Upload CSV</button>
+          </form>
+
+          <script>
+            // Capturar la ID de la asignatura desde la URL y asignarla al input oculto
+            document.addEventListener("DOMContentLoaded", function () {
+              const urlParts = window.location.pathname.split("/");
+              const subjectId = urlParts[urlParts.indexOf("subject") + 1]; // Obtener el ID después de 'subject'
+              document.getElementById("subject").value = subjectId;
+            });
+          </script>
+
 
         </div>
       </div>
