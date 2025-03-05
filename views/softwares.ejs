@@ -41,17 +41,22 @@
             </div>
           </div>-->
 
-          <form action="/addSoftwaresCSV" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-              <label for="csvFile">Select CSV File</label>
-              <input id="csvFile" class="form-control-file" type="file" name="archive" accept=".csv" required>
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Cargar CSV</h5>
+              <form action="/addSoftwaresCSV" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label for="csvFile">Selecciona el archivo CSV</label>
+                  <input id="csvFile" class="form-control-file" type="file" name="archive" accept=".csv" required>
+                </div>
+
+                <!-- Campo oculto para enviar subjectId desde la URL -->
+                <input type="hidden" id="subject" name="subject" value="">
+
+                <button class="btn btn-primary btn-block mt-3" type="submit">Cargar CSV</button>
+              </form>
             </div>
-
-            <!-- Campo oculto para enviar subjectId desde la URL -->
-            <input type="hidden" id="subject" name="subject" value="">
-
-            <button class="btn btn-primary btn-block mt-3" type="submit">Upload CSV</button>
-          </form>
+          </div>
 
           <script>
             // Capturar la ID de la asignatura desde la URL y asignarla al input oculto
