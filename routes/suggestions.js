@@ -16,7 +16,7 @@ let transporter = nodemailer.createTransport({
 
 // Renderizar la vista de sugerencias
 router.get('/suggestions', (req, res) => {
-    res.render('suggestions'); // Asegúrate de tener un archivo "suggestions.ejs" en la carpeta "views"
+    res.render('suggestions');
 });
 
 
@@ -26,7 +26,7 @@ router.post('/send-suggestion', isAuthenticated, async (req, res) => {
 
     try {
         // Obtener los correos de los administradores
-        const admins = await User.find({ rol: 'administrador' });
+        const admins = await User.find({ rol: 'admin' });
         const adminEmails = admins.map(admin => admin.email);
 
         if (adminEmails.length === 0) {

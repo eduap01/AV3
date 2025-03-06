@@ -91,8 +91,12 @@
               <% softwares.forEach((software, index) => { %>
                 <tr>
                   <td><%= index + 1 %></td>
-                  <td><strong><%= software.description %></strong></td>
-                  <td><%= software.link %></td>
+                  <td>
+                     <strong><%= software.description %></strong>
+                  </td>
+                  <td>
+                      <%= software.link %>
+                  </td>
                   <td>
                       <% if (software.archive) { %>
                             <a href="/files/<%= software.archive %>" download="<%= software.archive %>" title="<%= software.archive %>">
