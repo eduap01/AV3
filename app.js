@@ -19,6 +19,7 @@ var usersRouter = require('./routes/users');
 var studiesRouter = require('./routes/studies');
 var subjectsRouter = require('./routes/subjects');
 var softwaresRouter = require('./routes/softwares');
+var suggestionsRouter=require('./routes/suggestions');
 
 
 app.set('port', process.env.PORT || 3000);
@@ -56,6 +57,7 @@ app.use('/users', usersRouter);
 app.use('/subjects', subjectsRouter);
 app.use('/studies', studiesRouter);
 app.use('/softwares', softwaresRouter);
+app.use('/suggestions', suggestionsRouter);
 
 
 
@@ -65,6 +67,7 @@ app.use('/', usersRouter);
 app.use('/', subjectsRouter);
 app.use('/', studiesRouter);
 app.use('/', softwaresRouter);
+app.use('/', suggestionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

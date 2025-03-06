@@ -26,7 +26,7 @@
 
             <button class="btn btn-primary w-100" type="submit">Añadir</button>
           </form>
-      <!-- Upload CSV -->
+      <!-- Upload CSV
             <div class="card mt-3">
               <div class="card-body">
                 <h5 class="card-title">Upload CSV</h5>
@@ -39,7 +39,34 @@
                 </form>
               </div>
             </div>
+          </div>-->
+
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Cargar CSV</h5>
+              <form action="/addSoftwaresCSV" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label for="csvFile">Selecciona el archivo CSV</label>
+                  <input id="csvFile" class="form-control-file" type="file" name="archive" accept=".csv" required>
+                </div>
+
+                <!-- Campo oculto para enviar subjectId desde la URL -->
+                <input type="hidden" id="subject" name="subject" value="">
+
+                <button class="btn btn-primary btn-block mt-3" type="submit">Cargar CSV</button>
+              </form>
+            </div>
           </div>
+
+          <script>
+            // Capturar la ID de la asignatura desde la URL y asignarla al input oculto
+            document.addEventListener("DOMContentLoaded", function () {
+              const urlParts = window.location.pathname.split("/");
+              const subjectId = urlParts[urlParts.indexOf("subject") + 1]; // Obtener el ID después de 'subject'
+              document.getElementById("subject").value = subjectId;
+            });
+          </script>
+
 
         </div>
       </div>
@@ -64,8 +91,12 @@
               <% softwares.forEach((software, index) => { %>
                 <tr>
                   <td><%= index + 1 %></td>
-                  <td><strong><%= software.description %></strong></td>
-                  <td><%= software.link %></td>
+                  <td>
+                     <strong><%= software.description %></strong>
+                  </td>
+                  <td>
+                      <%= software.link %>
+                  </td>
                   <td>
                       <% if (software.archive) { %>
                             <a href="/files/<%= software.archive %>" download="<%= software.archive %>" title="<%= software.archive %>">
@@ -75,10 +106,14 @@
                         <em>No hay archivo</em>
                         <% } %>
                   </td>
+              <% if (user.rol === "admin" || user.rol === "profesor") { %>
                   <td>
+
                     <a href="/softwares/delete/<%= software._id %>" class="btn btn-danger btn-sm">Eliminar</a>
                     <a href="/softwares/edit/<%= software._id %>" class="btn btn-info btn-sm">Editar</a>
+
                   </td>
+              <% } %>
                 </tr>
               <% }); %>
             <% } else { %>

@@ -122,7 +122,9 @@ router.post('/edit/:id', isAuthenticated, async (req, res) => {
         const updatedSoftware = await Software.findByIdAndUpdate(
             id,
             { description, link },
-            { new: true })
+            { new: true }
+            )
+
 
         if (!updatedSoftware) {
             return res.status(404).send("Software no encontrado");
@@ -188,7 +190,7 @@ router.get('/search', isAuthenticated, async(req, res, next)=>{
 });
 
 // Subir tareas desde un archivo CSV
-router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
+/*router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
   try {
     if (!req.files || !req.files.archive) {
       return res.status(400).send('No se subió ningún archivo');
@@ -205,29 +207,83 @@ router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
     console.error('Error al subir CSV:', error);
     res.status(500).send('Error al subir archivo CSV');
   }
+});*/
+
+router.post('/addSoftwaresCSV', isAuthenticated, async (req, res) => {
+  try {
+    if (!req.files || !req.files.archive) {
+      return res.status(400).send('No se subió ningún archivo');
+    }
+
+    const subjectId = req.body.subject; // Aquí se obtiene el subjectId del formulario
+    if (!subjectId) {
+      return res.status(400).send('No se proporcionó una asignatura');
+    }
+
+    const fileSoftwares = req.files.archive;
+    const filePath = `./files/softwares/${fileSoftwares.name}`;
+
+    await fileSoftwares.mv(filePath);
+
+    // Procesar CSV con el subjectId
+    await readCSVFile(filePath, subjectId);
+
+    // Redirigir a la página correcta
+    res.redirect(`/softwares/subject/${subjectId}`);
+
+  } catch (error) {
+    console.error('Error al subir CSV:', error);
+    res.status(500).send('Error al subir archivo CSV');
+  }
 });
 
-const readCSVFile = async (fileName, user) => {
+const readCSVFile = async (fileName, subjectId) => {
   return new Promise((resolve, reject) => {
     const results = [];
     fs.createReadStream(fileName)
-      .pipe(csv({ headers: true, separator: ',' }))
+      .pipe(csv({ headers: ['description', 'link'], separator: ',' }))
       .on('data', (data) => results.push(data))
       .on('end', async () => {
-        console.log("Datos leídos:", results); // Verifica que todas las filas se están leyendo
+        console.log("Datos leídos:", results);
+
         for (const softwareData of results) {
+          if (!softwareData.description || !softwareData.link) {
+            console.error("Error: El CSV no contiene los campos requeridos.");
+            continue;
+          }
+
           const software = new Software({
             description: softwareData.description,
-            link: softwareData.link
+            link: softwareData.link,
+            subject: subjectId // Usamos el ID de la asignatura proporcionado
           });
 
           try {
             await software.save();
             console.log("Software guardado correctamente:", software);
+
+            // Obtener emails de los alumnos de la asignatura
+            const subject = await Subject.findById(subjectId).populate('students').exec();
+            if (subject) {
+              const emails = subject.students.map(student => student.email);
+
+              // Enviar notificación por email
+              let mensaje = `Software añadido\nDescripción: ${software.description}\nLink: ${software.link}\n`;
+              let mailOptions = {
+                from: 'cuenta.aula.datos@gmail.com',
+                to: emails.join(', '),
+                subject: 'Software añadido: ' + software.description,
+                text: mensaje
+              };
+
+              await transporter.sendMail(mailOptions);
+            }
+
           } catch (error) {
             console.error("Error al guardar software:", error);
           }
         }
+
         console.log('CSV procesado correctamente');
         resolve();
       })
@@ -237,8 +293,6 @@ const readCSVFile = async (fileName, user) => {
       });
   });
 };
-
-
 
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
